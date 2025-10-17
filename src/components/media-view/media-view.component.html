@@ -1,0 +1,69 @@
+<div 
+  class="h-full p-6 text-white bg-gradient-to-b from-base-300 to-base-500"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+>
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-3xl font-bold">Library</h1>
+    <button (click)="addFiles()" class="bg-brand hover:bg-brand-dark text-white font-bold py-2 px-4 rounded-full transition-colors duration-200 flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+      Add Files
+    </button>
+    <input type="file" #fileInput class="hidden" multiple accept="audio/*,video/*" (change)="onFileSelected($event)">
+  </div>
+  
+  @if (mediaService.library().length === 0) {
+    <div 
+      class="flex flex-col items-center justify-center h-4/5 border-2 border-dashed rounded-lg transition-colors"
+      [class.border-brand]="isDragging()"
+      [class.border-base-200]="!isDragging()"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-base-200 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 6l12-3" /></svg>
+        <p class="text-lg font-semibold text-base-100">Drag & Drop Your Songs Here</p>
+        <p class="text-base-subtle">or use the "Add Files" button</p>
+    </div>
+  } @else {
+    <div class="overflow-x-auto relative">
+      <table class="w-full text-sm text-left text-base-subtle">
+        <thead class="text-xs uppercase border-b border-base-200">
+          <tr>
+            <th scope="col" class="px-6 py-3 w-10 text-center">#</th>
+            <th scope="col" class="px-6 py-3">Title</th>
+            <th scope="col" class="px-6 py-3">Album</th>
+            <th scope="col" class="px-6 py-3 text-right">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (track of mediaService.library(); track track.id; let i = $index) {
+            <tr 
+              (click)="playTrack(track)" 
+              class="hover:bg-base-300/50 cursor-pointer group"
+              [class.text-brand]="playerService.currentTrack()?.id === track.id"
+            >
+              <td class="px-6 py-4 text-center">
+                <span class="group-hover:hidden">{{ i + 1 }}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden group-hover:inline text-white" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
+              </td>
+              <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap" [class.text-white]="playerService.currentTrack()?.id !== track.id">
+                <div class="flex items-center gap-4">
+                  <img [src]="track.coverArtUrl || 'https://picsum.photos/40'" class="w-10 h-10 rounded" alt="cover"/>
+                  <div>
+                    <div class="text-base text-white">{{ track.title }}</div>
+                    <div>{{ track.artist }}</div>
+                  </div>
+                </div>
+              </th>
+              <td class="px-6 py-4">{{ track.album }}</td>
+              <td class="px-6 py-4 text-right">{{ formatTime(track.duration) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
