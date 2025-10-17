@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avis | Détergents Algérie</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="logo" href="index.html">Détergents DZ</a>
+      <nav class="main-nav" aria-label="Navigation principale">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu">☰</button>
+        <ul id="nav-menu">
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="products.html">Produits</a></li>
+          <li><a href="reviews.html" aria-current="page">Avis</a></li>
+          <li><a href="about.html">À propos</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="admin.html" class="admin-link">Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Avis des clients</h1>
+    <div id="reviews-list" class="reviews"></div>
+
+    <section class="review-form">
+      <h2>Laisser un avis</h2>
+      <form id="reviewForm">
+        <div class="grid-2">
+          <label>
+            Nom
+            <input type="text" id="reviewerName" required />
+          </label>
+          <label>
+            Produit (optionnel)
+            <select id="reviewProduct">
+              <option value="">Général (entreprise)</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          Note
+          <select id="reviewRating" required>
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="1">★☆☆☆☆</option>
+          </select>
+        </label>
+        <label>
+          Votre avis
+          <textarea id="reviewText" rows="4" required></textarea>
+        </label>
+        <button class="btn btn-primary" type="submit">Envoyer</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Détergents DZ</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

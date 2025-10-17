@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact | Détergents Algérie</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="logo" href="index.html">Détergents DZ</a>
+      <nav class="main-nav" aria-label="Navigation principale">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu">☰</button>
+        <ul id="nav-menu">
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="products.html">Produits</a></li>
+          <li><a href="reviews.html">Avis</a></li>
+          <li><a href="about.html">À propos</a></li>
+          <li><a href="contact.html" aria-current="page">Contact</a></li>
+          <li><a href="admin.html" class="admin-link">Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Contactez-nous</h1>
+    <div class="grid-2">
+      <section>
+        <form id="contactForm">
+          <label>
+            Nom
+            <input type="text" id="contactName" required />
+          </label>
+          <label>
+            Email
+            <input type="email" id="contactEmail" required />
+          </label>
+          <label>
+            Message
+            <textarea id="contactMessage" rows="5" required></textarea>
+          </label>
+          <button class="btn btn-primary" type="submit">Envoyer</button>
+          <p id="contactStatus" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+      <aside>
+        <h2>Informations</h2>
+        <p><strong>Adresse:</strong> Alger, Algérie</p>
+        <p><strong>Téléphone:</strong> +213 XX XX XX XX</p>
+        <p><strong>Email:</strong> contact@detergentsdz.dz</p>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Détergents DZ</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

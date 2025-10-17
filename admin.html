@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Détergents Algérie</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="admin">
+  <header class="site-header">
+    <div class="container nav">
+      <a class="logo" href="index.html">Détergents DZ</a>
+      <nav class="main-nav" aria-label="Navigation principale">
+        <ul id="nav-menu">
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="products.html">Produits</a></li>
+          <li><a href="reviews.html">Avis</a></li>
+          <li><a href="about.html">À propos</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Tableau de bord</h1>
+
+    <section class="admin-section">
+      <h2>Produits</h2>
+      <form id="productForm" class="admin-form">
+        <input type="hidden" id="productId" />
+        <div class="grid-3">
+          <label>Nom<input id="productName" required /></label>
+          <label>Catégorie<input id="productCategory" required /></label>
+          <label>Prix (DZD)<input id="productPrice" type="number" min="0" step="50" required /></label>
+        </div>
+        <label>Description<textarea id="productDescription" rows="3" required></textarea></label>
+        <label>Image URL<input id="productImage" type="url" placeholder="https://..." /></label>
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">Enregistrer</button>
+          <button class="btn" type="button" id="productReset">Réinitialiser</button>
+        </div>
+      </form>
+      <div id="productsTable" class="table"></div>
+    </section>
+
+    <section class="admin-section">
+      <h2>Avis</h2>
+      <div id="reviewsTable" class="table"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Détergents DZ</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
+

@@ -1,185 +1,103 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="fr">
 <head>
-    <meta charset="utf-8" />
-    <title>Sonic Player - HTML & JS Edition</title>
-    <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              'brand': {
-                'light': '#22c55e',
-                'DEFAULT': '#1DB954',
-                'dark': '#1ed760',
-              },
-              'base': {
-                '100': '#b3b3b3',
-                '200': '#535353',
-                '300': '#282828',
-                '400': '#181818',
-                '500': '#121212',
-                'content': '#ffffff',
-                'subtle': '#a7a7a7',
-              }
-            }
-          }
-        }
-      }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
-<link rel="stylesheet" href="/index.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Entreprise de détergents en Algérie - Produits, avis, contact et informations." />
+  <title>Accueil | Détergents Algérie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="bg-base-500 text-base-content antialiased font-sans overflow-hidden">
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="logo" href="index.html">Détergents DZ</a>
+      <nav class="main-nav" aria-label="Navigation principale">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu">☰</button>
+        <ul id="nav-menu">
+          <li><a href="index.html" aria-current="page">Accueil</a></li>
+          <li><a href="products.html">Produits</a></li>
+          <li><a href="reviews.html">Avis</a></li>
+          <li><a href="about.html">À propos</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="admin.html" class="admin-link">Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-  <div class="grid grid-rows-[1fr_auto] grid-cols-[250px_1fr] h-screen w-screen bg-black text-base-100">
-
-    <!-- Sidebar -->
-    <aside class="col-start-1 row-start-1 bg-black p-2">
-      <div class="h-full flex flex-col bg-black text-base-100">
-        <!-- Top Section -->
-        <div class="bg-base-500 rounded-lg p-4 space-y-4">
-          <div class="flex items-center gap-3 text-lg font-bold text-white">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M12 6c-3.309 0-6 2.691-6 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6zm0 10c-2.206 0-4-1.794-4-4s1.794-4 4-4 4 1.794 4 4-1.794 4-4 4z"></path></svg>
-            <span>Sonic Player</span>
-          </div>
-          <nav>
-            <ul>
-              <li>
-                <a href="#" class="flex items-center gap-4 p-2 rounded hover:bg-base-400 transition-colors duration-200 text-white font-semibold">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1V10a1 1 0 00-1-1H7a1 1 0 00-1 1v10a1 1 0 001 1h2z" /></svg>
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="#" class="flex items-center gap-4 p-2 rounded hover:bg-base-400 transition-colors duration-200 text-base-subtle font-semibold">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                  Search
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <!-- Library & Playlists -->
-        <div class="bg-base-500 rounded-lg mt-2 p-2 flex-grow overflow-y-auto">
-          <div class="flex items-center justify-between p-2 mb-2">
-            <div class="flex items-center gap-2 text-base-subtle font-semibold">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-              Your Library
-            </div>
-            <button id="create-playlist-btn" class="text-base-subtle hover:text-white" title="Create new playlist">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-            </button>
-          </div>
-          <ul id="playlists-list" class="space-y-1">
-            <!-- Playlists will be dynamically inserted here -->
-          </ul>
-        </div>
-        <!-- Theme Toggle -->
-        <div class="p-4">
-          <button id="theme-toggle-btn" class="w-full flex items-center justify-center gap-2 p-2 rounded bg-base-400 hover:bg-base-300 text-sm font-semibold">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-            Toggle Theme
-          </button>
-        </div>
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Propreté, qualité, confiance</h1>
+        <p>Fabricant algérien de détergents pour foyers et entreprises. Découvrez nos solutions efficaces et respectueuses.</p>
+        <a href="products.html" class="btn btn-primary">Voir nos produits</a>
       </div>
-    </aside>
+    </section>
 
-    <!-- Main Content -->
-    <main id="main-content" class="col-start-2 row-start-1 bg-base-500 rounded-lg m-2 overflow-y-auto">
-      <div id="video-container" class="w-full h-full bg-black items-center justify-center hidden">
-        <!-- Video element will be appended here -->
+    <section class="highlights container">
+      <h2>Pourquoi nous choisir</h2>
+      <div class="grid-3">
+        <article class="card">
+          <h3>Qualité certifiée</h3>
+          <p>Formules testées et validées pour une efficacité maximale.</p>
+        </article>
+        <article class="card">
+          <h3>Made in Algérie</h3>
+          <p>Production locale avec des standards internationaux.</p>
+        </article>
+        <article class="card">
+          <h3>Engagement écologique</h3>
+          <p>Réduction des déchets et emballages recyclables.</p>
+        </article>
       </div>
-      <div id="media-view-container" class="h-full">
-        <div class="h-full p-6 text-white bg-gradient-to-b from-base-300 to-base-500">
-          <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold">Library</h1>
-            <button id="add-files-btn" class="bg-brand hover:bg-brand-dark text-white font-bold py-2 px-4 rounded-full transition-colors duration-200 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
-              Add Files
-            </button>
-            <input type="file" id="file-input" class="hidden" multiple accept="audio/*,video/*">
-          </div>
-          
-          <div id="empty-library-view" class="flex flex-col items-center justify-center h-4/5 border-2 border-dashed rounded-lg transition-colors border-base-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-base-200 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 6l12-3" /></svg>
-            <p class="text-lg font-semibold text-base-100">Drag & Drop Your Songs Here</p>
-            <p class="text-base-subtle">or use the "Add Files" button</p>
-          </div>
-          
-          <div id="library-view" class="overflow-x-auto relative hidden">
-            <table class="w-full text-sm text-left text-base-subtle">
-              <thead class="text-xs uppercase border-b border-base-200">
-                <tr>
-                  <th scope="col" class="px-6 py-3 w-10 text-center">#</th>
-                  <th scope="col" class="px-6 py-3">Title</th>
-                  <th scope="col" class="px-6 py-3">Album</th>
-                  <th scope="col" class="px-6 py-3 text-right">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  </th>
-                </tr>
-              </thead>
-              <tbody id="library-table-body">
-                <!-- Tracks will be dynamically inserted here -->
-              </tbody>
-            </table>
-          </div>
-        </div>
+    </section>
+
+    <section class="featured container">
+      <div class="section-head">
+        <h2>Produits en vedette</h2>
+        <a class="link" href="products.html">Tous les produits →</a>
       </div>
-    </main>
+      <div id="featured-products" class="product-grid" aria-live="polite"></div>
+    </section>
 
-    <!-- Player Bar -->
-    <footer class="col-span-2 row-start-2 bg-base-500">
-      <div class="h-24 bg-base-400 p-4 flex items-center justify-between text-white border-t border-base-300">
-        <!-- Current Track Info -->
-        <div class="w-1/4 flex items-center gap-3">
-          <img id="player-album-art" src="https://picsum.photos/64" alt="Album Art" class="w-14 h-14 rounded"/>
-          <div id="player-track-info">
-            <h3 id="player-track-title" class="font-semibold">No song playing</h3>
-            <p id="player-track-artist" class="text-xs text-base-subtle">Select a song from your library</p>
-          </div>
-        </div>
-
-        <!-- Player Controls -->
-        <div class="w-1/2 flex flex-col items-center justify-center gap-2">
-          <div class="flex items-center gap-4">
-            <button id="prev-btn" class="text-base-subtle hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.33 11.23a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 1.06L6.47 10l3.17 3.17a.75.75 0 01-1.06 1.06l-4.25-4.25z" clip-rule="evenodd" transform="translate(-1.5,0)" /></svg>
-            </button>
-            <button id="play-pause-btn" class="w-10 h-10 flex items-center justify-center rounded-full bg-white text-black hover:scale-105 transition-transform">
-              <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
-              <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-            </button>
-            <button id="next-btn" class="text-base-subtle hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.94-11.23a.75.75 0 00-1.06 1.06L13.53 10l-3.17 3.17a.75.75 0 101.06 1.06l4.25-4.25a.75.75 0 000-1.06l-4.25-4.25z" clip-rule="evenodd" transform="translate(0.5,0)" /></svg>
-            </button>
-          </div>
-          <div class="w-full flex items-center gap-2">
-            <span id="current-time" class="text-xs text-base-subtle">0:00</span>
-            <input id="seek-slider" type="range" min="0" max="100" value="0" class="w-full h-1 bg-base-200 rounded-lg appearance-none cursor-pointer range-sm dark:bg-gray-700" />
-            <span id="duration" class="text-xs text-base-subtle">0:00</span>
-          </div>
-        </div>
-
-        <!-- Volume Controls -->
-        <div class="w-1/4 flex items-center justify-end gap-2">
-          <button id="mute-btn" class="text-base-subtle hover:text-white">
-            <svg id="volume-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" transform="scale(1.5) translate(-3.3, -5)" /></svg>
-            <svg id="mute-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-          </button>
-          <input id="volume-slider" type="range" min="0" max="1" step="0.01" value="1" class="w-24 h-1 bg-base-200 rounded-lg appearance-none cursor-pointer range-sm" />
-        </div>
+    <section class="cta">
+      <div class="container">
+        <h2>Essayez nos détergents aujourd'hui</h2>
+        <p>Des performances prouvées, des clients satisfaits partout en Algérie.</p>
+        <a href="reviews.html" class="btn">Lire les avis</a>
       </div>
-    </footer>
+    </section>
+  </main>
 
-  </div>
-  
-  <script src="app.js" type="module"></script>
-<script type="module" src="/index.tsx"></script>
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <div class="logo">Détergents DZ</div>
+        <p>© <span id="year"></span> Tous droits réservés.</p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="products.html">Produits</a></li>
+          <li><a href="about.html">À propos</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="reviews.html">Avis</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Suivez-nous</h4>
+        <ul class="socials">
+          <li><a href="#" aria-label="Facebook">Facebook</a></li>
+          <li><a href="#" aria-label="Instagram">Instagram</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>
+

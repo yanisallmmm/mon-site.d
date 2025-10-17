@@ -1,376 +1,162 @@
-// Allow using jsmediatags from CDN
-const jsmediatags = window.jsmediatags;
+(function() {
+  const navToggle = document.querySelector('.nav-toggle');
+  const mainNav = document.querySelector('.main-nav');
+  if (navToggle && mainNav) {
+    navToggle.addEventListener('click', () => {
+      const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+      navToggle.setAttribute('aria-expanded', String(!expanded));
+      mainNav.classList.toggle('show');
+      const menu = document.getElementById('nav-menu');
+      if (menu) menu.classList.toggle('show');
+    });
+  }
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-document.addEventListener('DOMContentLoaded', () => {
-  // --- STATE ---
-  let library = [];
-  let playlists = [];
-  let currentTrack = null;
-  let isPlaying = false;
-  let isMuted = false;
-  let queue = [];
-  let currentIndex = 0;
-  let currentVolume = 1;
-
-  // --- DOM ELEMENTS ---
-  const fileInput = document.getElementById('file-input');
-  const addFilesBtn = document.getElementById('add-files-btn');
-  const emptyLibraryView = document.getElementById('empty-library-view');
-  const libraryView = document.getElementById('library-view');
-  const libraryTableBody = document.getElementById('library-table-body');
-  const mainContent = document.getElementById('main-content');
-  const themeToggleBtn = document.getElementById('theme-toggle-btn');
-  const createPlaylistBtn = document.getElementById('create-playlist-btn');
-  const playlistsList = document.getElementById('playlists-list');
-
-  // Player Elements
-  const playerAlbumArt = document.getElementById('player-album-art');
-  const playerTrackTitle = document.getElementById('player-track-title');
-  const playerTrackArtist = document.getElementById('player-track-artist');
-  const prevBtn = document.getElementById('prev-btn');
-  const playPauseBtn = document.getElementById('play-pause-btn');
-  const playIcon = document.getElementById('play-icon');
-  const pauseIcon = document.getElementById('pause-icon');
-  const nextBtn = document.getElementById('next-btn');
-  const currentTimeEl = document.getElementById('current-time');
-  const durationEl = document.getElementById('duration');
-  const seekSlider = document.getElementById('seek-slider');
-  const muteBtn = document.getElementById('mute-btn');
-  const volumeIcon = document.getElementById('volume-icon');
-  const muteIcon = document.getElementById('mute-icon');
-  const volumeSlider = document.getElementById('volume-slider');
-  
-  // Video Elements
-  const videoContainer = document.getElementById('video-container');
-  const mediaViewContainer = document.getElementById('media-view-container');
-  const videoElement = document.createElement('video');
-  videoElement.className = "max-w-full max-h-full";
-  videoElement.controls = true;
-  videoContainer.appendChild(videoElement);
-
-  const audioElement = new Audio();
-
-  // --- HELPER FUNCTIONS ---
-  const formatTime = (seconds) => {
-    if (isNaN(seconds) || seconds < 0) {
-      return '0:00';
-    }
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
-  
-  const getActiveElement = () => currentTrack?.type === 'video' ? videoElement : audioElement;
-
-  // --- LOCAL STORAGE ---
-  const savePlaylists = () => {
-    localStorage.setItem('sonic-playlists', JSON.stringify(playlists));
+  // Data persistence via localStorage
+  const storage = {
+    get(key, fallback) {
+      try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback; } catch { return fallback; }
+    },
+    set(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
   };
 
-  const loadFromLocalStorage = () => {
-    const storedPlaylists = localStorage.getItem('sonic-playlists');
-    if (storedPlaylists) {
-      playlists = JSON.parse(storedPlaylists);
-      renderPlaylists();
-    }
-    // Library is not persisted due to File object limitations
-    library = [];
-    renderLibrary();
-  };
-
-
-  // --- UI RENDERING ---
-  const renderLibrary = () => {
-    libraryTableBody.innerHTML = ''; // Clear existing table
-    if (library.length === 0) {
-      emptyLibraryView.style.display = 'flex';
-      libraryView.style.display = 'none';
-    } else {
-      emptyLibraryView.style.display = 'none';
-      libraryView.style.display = 'block';
-      library.forEach((track, index) => {
-        const row = document.createElement('tr');
-        row.className = 'hover:bg-base-300/50 cursor-pointer group';
-        if(currentTrack?.id === track.id) {
-            row.classList.add('text-brand');
-        }
-        
-        row.innerHTML = `
-          <td class="px-6 py-4 text-center">
-            <span class="group-hover:hidden">${index + 1}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden group-hover:inline text-white" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-            </svg>
-          </td>
-          <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap ${currentTrack?.id === track.id ? '' : 'text-white'}">
-            <div class="flex items-center gap-4">
-              <img src="${track.coverArtUrl || 'https://picsum.photos/40'}" class="w-10 h-10 rounded" alt="cover"/>
-              <div>
-                <div class="text-base text-white">${track.title}</div>
-                <div>${track.artist}</div>
-              </div>
-            </div>
-          </th>
-          <td class="px-6 py-4">${track.album}</td>
-          <td class="px-6 py-4 text-right">${formatTime(track.duration)}</td>
-        `;
-        row.addEventListener('click', () => playTrack(track));
-        libraryTableBody.appendChild(row);
-      });
-    }
-  };
-  
-  const renderPlaylists = () => {
-      playlistsList.innerHTML = '';
-      playlists.forEach(playlist => {
-          const li = document.createElement('li');
-          li.innerHTML = `<a href="#" class="block p-2 rounded hover:bg-base-400 text-sm text-base-subtle font-medium transition-colors duration-200">${playlist.name}</a>`;
-          playlistsList.appendChild(li);
-      });
+  function seedDemoData() {
+    const seeded = storage.get('seeded', false);
+    if (seeded) return;
+    const products = [
+      { id: cryptoRandomId(), name: 'Détergent Vaisselle', category: 'Cuisine', price: 350, description: 'Nettoyage puissant et doux pour les mains.', image: '' },
+      { id: cryptoRandomId(), name: 'Lessive Liquide', category: 'Linge', price: 1200, description: 'Efficace dès 30°C, senteur fraîche.', image: '' },
+      { id: cryptoRandomId(), name: 'Nettoyant Sol', category: 'Maison', price: 800, description: 'Brillance et hygiène pour tous types de sols.', image: '' }
+    ];
+    const reviews = [
+      { id: cryptoRandomId(), name: 'Nadia', rating: 5, text: 'Produits de très bonne qualité !', productId: '' },
+      { id: cryptoRandomId(), name: 'Amine', rating: 4, text: 'Bon rapport qualité/prix.', productId: '' }
+    ];
+    storage.set('products', products);
+    storage.set('reviews', reviews);
+    storage.set('seeded', true);
   }
 
-  const updatePlayerUI = () => {
-    if (currentTrack) {
-      playerAlbumArt.src = currentTrack.coverArtUrl || 'https://picsum.photos/64';
-      playerTrackTitle.textContent = currentTrack.title;
-      playerTrackArtist.textContent = currentTrack.artist;
-    } else {
-      playerAlbumArt.src = 'https://picsum.photos/64';
-      playerTrackTitle.textContent = 'No song playing';
-      playerTrackArtist.textContent = 'Select a song from your library';
+  function cryptoRandomId() {
+    if (window.crypto?.getRandomValues) {
+      const arr = new Uint32Array(4); window.crypto.getRandomValues(arr); return Array.from(arr, n => n.toString(16)).join('');
     }
-    
-    // Update play/pause icon
-    if (isPlaying) {
-      playIcon.style.display = 'none';
-      pauseIcon.style.display = 'block';
-    } else {
-      playIcon.style.display = 'block';
-      pauseIcon.style.display = 'none';
-    }
-    
-    // Update mute/unmute icon
-    if (isMuted || currentVolume === 0) {
-        volumeIcon.style.display = 'none';
-        muteIcon.style.display = 'block';
-    } else {
-        volumeIcon.style.display = 'block';
-        muteIcon.style.display = 'none';
-    }
-
-    renderLibrary(); // Re-render to highlight current track
-  };
-  
-  const showVideoPlayer = (show) => {
-    if (show) {
-        videoContainer.style.display = 'flex';
-        mediaViewContainer.style.display = 'none';
-    } else {
-        videoContainer.style.display = 'none';
-        mediaViewContainer.style.display = 'block';
-    }
-  };
-
-  // --- MEDIA & METADATA ---
-  const readMetadata = (file) => {
-    return new Promise((resolve) => {
-      const isVideo = file.type.startsWith('video/');
-      const url = URL.createObjectURL(file);
-      const mediaEl = isVideo ? document.createElement('video') : new Audio();
-
-      mediaEl.addEventListener('loadedmetadata', () => {
-        URL.revokeObjectURL(url);
-        const duration = mediaEl.duration;
-
-        if (isVideo || !file.type.startsWith('audio/mpeg')) {
-          resolve({ title: file.name.replace(/\.[^/.]+$/, ""), artist: 'Unknown Artist', album: 'Unknown Album', duration: duration || 0, type: isVideo ? 'video' : 'audio' });
-          return;
-        }
-
-        jsmediatags.read(file, {
-          onSuccess: (tag) => {
-            const tags = tag.tags;
-            const picture = tags.picture;
-            let coverArtUrl;
-            if (picture) {
-              const base64String = btoa(String.fromCharCode.apply(null, picture.data));
-              coverArtUrl = `data:${picture.format};base64,${base64String}`;
-            }
-            resolve({ title: tags.title || file.name.replace(/\.[^/.]+$/, ""), artist: tags.artist || 'Unknown Artist', album: tags.album || 'Unknown Album', duration: duration || 0, coverArtUrl, type: 'audio' });
-          },
-          onError: () => resolve({ title: file.name.replace(/\.[^/.]+$/, ""), artist: 'Unknown Artist', album: 'Unknown Album', duration: duration || 0, type: 'audio' })
-        });
-      });
-      mediaEl.src = url;
-    });
-  };
-
-  const handleAddFiles = async (files) => {
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const metadata = await readMetadata(file);
-      library.push({
-        id: crypto.randomUUID(),
-        file: file,
-        ...metadata,
-      });
-    }
-    renderLibrary();
-  };
-
-  // --- PLAYER LOGIC ---
-  const playTrack = (track) => {
-    queue = library;
-    currentIndex = library.findIndex(t => t.id === track.id);
-    currentTrack = track;
-    
-    // Stop and reset both elements
-    audioElement.pause();
-    videoElement.pause();
-    
-    const mediaUrl = URL.createObjectURL(track.file);
-    const activeElement = getActiveElement();
-    
-    showVideoPlayer(track.type === 'video');
-
-    activeElement.src = mediaUrl;
-    activeElement.play();
-    isPlaying = true;
-    updatePlayerUI();
-  };
-
-  const togglePlayPause = () => {
-    if (!currentTrack) return;
-    const activeElement = getActiveElement();
-    if (isPlaying) {
-      activeElement.pause();
-    } else {
-      activeElement.play();
-    }
-    isPlaying = !isPlaying;
-    updatePlayerUI();
-  };
-  
-  const nextTrack = () => {
-    if(queue.length === 0) return;
-    currentIndex = (currentIndex + 1) % queue.length;
-    playTrack(queue[currentIndex]);
-  };
-  
-  const prevTrack = () => {
-    if(queue.length === 0) return;
-    currentIndex = (currentIndex - 1 + queue.length) % queue.length;
-    playTrack(queue[currentIndex]);
-  };
-
-  const seek = (time) => {
-      getActiveElement().currentTime = time;
-  };
-  
-  const setVolume = (volume) => {
-      audioElement.volume = volume;
-      videoElement.volume = volume;
-      currentVolume = volume;
-      if (volume > 0 && isMuted) {
-          isMuted = false;
-          audioElement.muted = false;
-          videoElement.muted = false;
-      }
-      updatePlayerUI();
-  }
-  
-  const toggleMute = () => {
-    isMuted = !isMuted;
-    audioElement.muted = isMuted;
-    videoElement.muted = isMuted;
-    updatePlayerUI();
+    return Math.random().toString(16).slice(2) + Date.now().toString(16);
   }
 
-  // --- EVENT LISTENERS ---
-  addFilesBtn.addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', (e) => handleAddFiles(e.target.files));
+  function getProducts() { return storage.get('products', []); }
+  function getReviews() { return storage.get('reviews', []); }
+  function saveProducts(products) { storage.set('products', products); }
+  function saveReviews(reviews) { storage.set('reviews', reviews); }
 
-  // Drag and Drop
-  mainContent.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    emptyLibraryView.classList.add('border-brand');
-    emptyLibraryView.classList.remove('border-base-200');
-  });
-  mainContent.addEventListener('dragleave', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    emptyLibraryView.classList.remove('border-brand');
-    emptyLibraryView.classList.add('border-base-200');
-  });
-  mainContent.addEventListener('drop', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    emptyLibraryView.classList.remove('border-brand');
-    emptyLibraryView.classList.add('border-base-200');
-    if (e.dataTransfer?.files) {
-      handleAddFiles(e.dataTransfer.files);
+  function renderFeatured() {
+    const container = document.getElementById('featured-products');
+    if (!container) return;
+    const products = getProducts().slice(0, 3);
+    container.innerHTML = products.map(p => productCardHTML(p)).join('');
+  }
+
+  function renderProductsPage() {
+    const list = document.getElementById('products-list');
+    if (!list) return;
+    const search = document.getElementById('search');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const allProducts = getProducts();
+    const categories = Array.from(new Set(allProducts.map(p => p.category))).sort();
+    if (categoryFilter) {
+      categoryFilter.innerHTML = '<option value="">Toutes les catégories</option>' + categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
     }
-  });
-  
-  // Theme Toggle
-  themeToggleBtn.addEventListener('click', () => {
-      document.documentElement.classList.toggle('dark');
-  });
-  
-  // Playlist
-  createPlaylistBtn.addEventListener('click', () => {
-      const playlistName = prompt('Enter new playlist name:');
-      if(playlistName && playlistName.trim()) {
-          playlists.push({ id: crypto.randomUUID(), name: playlistName.trim(), trackIds: [] });
-          savePlaylists();
-          renderPlaylists();
-      }
-  });
+    function apply() {
+      const q = (search?.value || '').toLowerCase();
+      const cat = categoryFilter?.value || '';
+      const filtered = allProducts.filter(p =>
+        (!q || p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)) &&
+        (!cat || p.category === cat)
+      );
+      list.innerHTML = filtered.map(p => productCardHTML(p)).join('');
+    }
+    search?.addEventListener('input', apply);
+    categoryFilter?.addEventListener('change', apply);
+    apply();
+  }
 
-  // Player Controls
-  playPauseBtn.addEventListener('click', togglePlayPause);
-  nextBtn.addEventListener('click', nextTrack);
-  prevBtn.addEventListener('click', prevTrack);
-  muteBtn.addEventListener('click', toggleMute);
+  function productCardHTML(p) {
+    const price = new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD' }).format(p.price || 0);
+    const img = p.image ? `<img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}" />` : '<div style="height:160px;background:#eef;display:flex;align-items:center;justify-content:center;color:#555;">Image</div>';
+    return `
+      <article class="product">
+        ${img}
+        <div class="content">
+          <div class="badge">${escapeHtml(p.category)}</div>
+          <h3>${escapeHtml(p.name)}</h3>
+          <div class="price">${price}</div>
+          <p>${escapeHtml(p.description)}</p>
+        </div>
+      </article>
+    `;
+  }
 
-  seekSlider.addEventListener('input', (e) => {
-      const duration = getActiveElement().duration;
-      if(duration) {
-          const seekTime = (e.target.value / 100) * duration;
-          seek(seekTime);
-      }
-  });
-  
-  volumeSlider.addEventListener('input', (e) => setVolume(parseFloat(e.target.value)));
+  function renderReviewsPage() {
+    const list = document.getElementById('reviews-list');
+    const form = document.getElementById('reviewForm');
+    const productSelect = document.getElementById('reviewProduct');
+    if (!list || !form || !productSelect) return;
+    const products = getProducts();
+    productSelect.innerHTML = '<option value="">Général (entreprise)</option>' + products.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
 
-  const setupMediaListeners = (element) => {
-    element.addEventListener('timeupdate', () => {
-      const { currentTime, duration } = element;
-      currentTimeEl.textContent = formatTime(currentTime);
-      if(duration) {
-          const progress = (currentTime / duration) * 100;
-          seekSlider.value = progress;
-      }
+    function draw() {
+      const reviews = getReviews().slice().reverse();
+      list.innerHTML = reviews.map(r => reviewHTML(r, products)).join('');
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('reviewerName').value.trim();
+      const rating = Number(document.getElementById('reviewRating').value);
+      const text = document.getElementById('reviewText').value.trim();
+      const productId = productSelect.value;
+      if (!name || !text || !rating) return;
+      const reviews = getReviews();
+      reviews.push({ id: cryptoRandomId(), name, rating, text, productId });
+      saveReviews(reviews);
+      form.reset();
+      draw();
     });
-    element.addEventListener('durationchange', () => {
-      durationEl.textContent = formatTime(element.duration);
-    });
-    element.addEventListener('ended', nextTrack);
-    element.addEventListener('volumechange', () => {
-        volumeSlider.value = element.volume;
-        updatePlayerUI();
-    });
-  };
+    draw();
+  }
 
-  setupMediaListeners(audioElement);
-  setupMediaListeners(videoElement);
-  
-  // --- INITIALIZATION ---
-  const init = () => {
-    loadFromLocalStorage();
-    updatePlayerUI();
-  };
+  function reviewHTML(r, products) {
+    const stars = '★★★★★'.slice(0, r.rating) + '☆☆☆☆☆'.slice(r.rating);
+    const product = products.find(p => p.id === r.productId);
+    const label = product ? `Avis sur: ${escapeHtml(product.name)}` : 'Avis sur l\'entreprise';
+    return `
+      <article class="review">
+        <div class="stars" aria-label="${r.rating} sur 5">${stars}</div>
+        <div><strong>${escapeHtml(r.name)}</strong> — <small>${label}</small></div>
+        <p>${escapeHtml(r.text)}</p>
+      </article>
+    `;
+  }
 
-  init();
-});
+  function renderContactPage() {
+    const form = document.getElementById('contactForm');
+    const status = document.getElementById('contactStatus');
+    if (!form || !status) return;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      status.textContent = 'Merci pour votre message, nous vous répondrons bientôt.';
+      form.reset();
+    });
+  }
+
+  function escapeHtml(s) { return (s ?? '').toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m])); }
+  function escapeAttr(s) { return escapeHtml(s).replace(/"/g, '&quot;'); }
+
+  seedDemoData();
+  renderFeatured();
+  renderProductsPage();
+  renderReviewsPage();
+  renderContactPage();
+})();
+

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Produits | Détergents Algérie</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="logo" href="index.html">Détergents DZ</a>
+      <nav class="main-nav" aria-label="Navigation principale">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu">☰</button>
+        <ul id="nav-menu">
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="products.html" aria-current="page">Produits</a></li>
+          <li><a href="reviews.html">Avis</a></li>
+          <li><a href="about.html">À propos</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="admin.html" class="admin-link">Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section-head">
+      <h1>Tous nos produits</h1>
+      <div class="filters">
+        <input id="search" type="search" placeholder="Rechercher un produit..." />
+        <select id="categoryFilter" aria-label="Filtrer par catégorie">
+          <option value="">Toutes les catégories</option>
+        </select>
+      </div>
+    </section>
+    <section>
+      <div id="products-list" class="product-grid" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Détergents DZ</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
