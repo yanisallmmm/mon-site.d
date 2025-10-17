@@ -1,5 +1,5 @@
 {
-  "name": "Angular Sonic Player",
-  "description": "A modern, Spotify-inspired media player built with Angular and Tailwind CSS. It plays local MP3 and MP4 files, supports playlists, and features a sleek, responsive interface.",
+  "name": "Sonic Player - HTML & JS Edition",
+  "description": "A modern, Spotify-inspired media player built with pure HTML, CSS (Tailwind), and JavaScript. It plays local MP3 and MP4 files, supports playlists, and features a sleek, responsive interface.",
   "requestFramePermissions": []
 }
